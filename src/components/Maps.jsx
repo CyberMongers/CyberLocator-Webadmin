@@ -3,8 +3,9 @@ import { Circle, MapContainer, Marker, Polygon, Polyline, Popup, TileLayer } fro
 import {w3cwebsocket} from 'websocket'
 import L from 'leaflet';
 import { officer_db } from '@/utility/officer_db';
-
-export default function Maps() {
+import { missions } from '@/utility/mission_db';
+import { useToast } from '@chakra-ui/react';
+export default function Maps({setModal,setModalData}) {
  const [socket,setSocket] = useState(null)
  const [personals,setPersonals] =useState([])
  function addUserToUserList(user, userList) {
@@ -15,7 +16,7 @@ export default function Maps() {
   }
   return userList;
 }
-
+ const toast = useToast()
  useEffect(() => {
   const newSocket = new w3cwebsocket('wss://api-snappio.onrender.com/ws/rooms/123456/')
 
@@ -47,10 +48,10 @@ const pointerIcon = new L.Icon({
         popupAnchor: [0, -41],
       });
 
-    const position = [22.3577455, 88.4385163]
-     const [Lat,setLat] = useState(20.59)
-     const [Long,setLong] = useState(78.96)
-    const [personalLoc,setPersonalLoc] = useState([Lat,Long])
+    const position = [22.5310, 88.3260]
+    //  const [Lat,setLat] = useState(20.59)
+    //  const [Long,setLong] = useState(78.96)
+    // const [personalLoc,setPersonalLoc] = useState([Lat,Long])
 
 //     useEffect(()=>{
 //         const int = setInterval(()=>{
@@ -68,27 +69,45 @@ const pointerIcon = new L.Icon({
 
 
 
-useEffect(()=>{
-setPersonalLoc([Lat,Long])
-},[Lat,Long])
+// useEffect(()=>{
+// setPersonalLoc([Lat,Long])
+// },[Lat,Long])
   
   const fillBlueOptions = { fillColor: 'red' }
 
 
-  function handleMarkerMove() {
+  function handleMarkerMove(Lat,Long,id) {
     const distance = L.latLng(position).distanceTo(L.latLng(Lat, Long));
-    if (distance > 20000) {
+    console.log(distance)
+    if (distance > 8000) {
       console.log("officer outof allocated area")
+      toast({
+        title: 'Personal Out Of Mission Area',
+        description: id,
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right'
+      })
     }
+    return 1;
   }
 
   useEffect(()=>{
   console.log(personals)
+  personals.map((personal)=>{
+
+    if(personal.length!==0)
+    handleMarkerMove(personal?.latitude,personal?.longitude,personal?.userId)
+  }
+  )
   },[personals])
 
-  useEffect(()=>{
-  handleMarkerMove();
-  },[personalLoc])
+
+
+  // useEffect(()=>{
+  // handleMarkerMove();
+  // },[personalLoc])
 
   const getUserName=(id)=>{
 
@@ -96,6 +115,11 @@ setPersonalLoc([Lat,Long])
     if(user)
     return user.first_name + user.last_name
      return 'Unknown'
+  }
+
+  const func =(data)=>{
+    setModal(true)
+    setModalData(data)
   }
   return (
     <div className="relative w-screen h-screen">
@@ -105,11 +129,14 @@ setPersonalLoc([Lat,Long])
       attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
-     <Circle center={position} pathOptions={fillBlueOptions} radius={20000} />
+    {missions?.map((mission)=>{
+    return (<Circle key={mission.name} center={[mission.lat,mission.long]} pathOptions={fillBlueOptions} radius={8000}  eventHandlers={{click:()=> func(mission)}}/>)
+    })}
     {personals?.map((personal)=>{
-      return (<Marker key={personal.userId} position={personal.location} icon={pointerIcon} onMove={handleMarkerMove} >
+      return ( <Marker  key={personal.userId} position={personal.location} icon={pointerIcon} >
       <Popup>
         <div className="flex">
+          <img src={personal.avatar} alt="" />
           <p>{getUserName(personal.userId)}</p>
         </div>
       </Popup>
@@ -123,7 +150,7 @@ setPersonalLoc([Lat,Long])
 </div>
 <div className="h-[8rem] shadow-2xl w-[10%] bg-red-700/90 text-white rounded-xl p-5">
  <p className='text-[1.2rem] font-extrabold'>Active Misson</p> 
- <p className='text-[2.5rem] text-center font-extrabold'>1</p>
+ <p className='text-[2.5rem] text-center font-extrabold'>{missions.length}</p>
 </div>
 </div>
 </div>
