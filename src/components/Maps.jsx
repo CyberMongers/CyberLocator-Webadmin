@@ -144,12 +144,12 @@ const pointerIcon = new L.Icon({
 })}
   </MapContainer>
 <div className="absolute bottom-0 left-0 h-[10rem] p-5 w-full flex gap-5 bg-white/20 backdrop-blur-sm z-[100]">
-<div className="h-[8rem] shadow-2xl w-[10%] bg-blue-700/90 text-white rounded-xl p-5">
- <p className='text-[1.2rem] font-extrabold'>Active Personal</p> 
+<div className="h-[8rem] shadow-2xl w-[10%] bg-blue-700/90 text-white rounded-xl py-5">
+ <p className='text-[1rem] text-center font-extrabold'>Active Personal</p> 
  <p className='text-[2.5rem] text-center font-extrabold'>{personals.length}</p>
 </div>
-<div className="h-[8rem] shadow-2xl w-[10%] bg-red-700/90 text-white rounded-xl p-5">
- <p className='text-[1.2rem] font-extrabold'>Active Misson</p> 
+<div className="h-[8rem] shadow-2xl w-[10%] bg-red-700/90 text-white rounded-xl py-5">
+ <p className='text-[1rem] text-center font-extrabold'>Active Misson</p> 
  <p className='text-[2.5rem] text-center font-extrabold'>{missions.length}</p>
 </div>
 </div>
