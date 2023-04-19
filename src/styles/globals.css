@@ -1,8 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Poppins&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root {
+ :root {
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
 }
